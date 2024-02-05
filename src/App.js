@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import Grid from '@mui/material/Unstable_Grid2'
+import { Button } from '@mui/material'
+import ControlPointIcon from '@mui/icons-material/ControlPoint'
 
-function App() {
+import { Helmet } from "react-helmet-async"
+import { useNavigate } from 'react-router-dom'
+import { useGetContactsQuery } from "./slices/contactApi"
+
+import { Contacts } from "./components/Contacts/"
+import { Spinner } from './components/Spinner'
+
+
+const App = () => {
+  const navigate = useNavigate()
+
+  const {
+    isLoading: getLoading,
+    isSuccess: getSuccess
+  } = useGetContactsQuery()
+
+  let showContacts
+  if (getLoading) {
+    showContacts = <Spinner />
+  } else if (getSuccess) {
+    showContacts = <Contacts />
+  } else {
+    showContacts = null
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <Helmet>
+        <title>وبسایت مدیریت مخاطبین</title>
+      </Helmet>
+      <Grid container width={1}>
+        <Grid xs={12}
+          component="header"
+          pt={3}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "primary.light" }}
+            onClick={() => navigate("/add-contact")}
+          >
+            ساخت مخاطب جدید
+            <ControlPointIcon />
+          </Button>
+        </Grid>
+        <Grid xs={12} component="main">
+          {
+            showContacts
+          }
+        </Grid>
+      </Grid>
+    </>
+  )
 }
 
-export default App;
+export default App
